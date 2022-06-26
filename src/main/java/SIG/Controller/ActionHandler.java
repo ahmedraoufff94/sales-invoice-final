@@ -18,11 +18,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 
-import javax.swing.JFileChooser;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -216,12 +219,18 @@ public class ActionHandler implements ActionListener, ListSelectionListener {
                 System.out.println("file read");
                 ArrayList<InvoiceHeader>inv = new ArrayList<>();
                 for(String headerline : headerLines){
-                    String [] splits = headerline.split(",");
-                    int invNum = Integer.parseInt(splits[0]);
-                    String invDate = splits[1];
-                    String name = splits[2];
-                    InvoiceHeader invoice = new InvoiceHeader(invNum,name , invDate);
-                    inv.add(invoice);
+                    try {
+                        String[] splits = headerline.split(",");
+                        int invNum = Integer.parseInt(splits[0]);
+                        String invDate = splits[1];
+                        String name = splits[2];
+                        InvoiceHeader invoice = new InvoiceHeader(invNum, name, invDate);
+                        inv.add(invoice);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(frame,"please load correct file format","Error",JOptionPane.ERROR_MESSAGE);
+
+                    }
                 }
 
                 selection=fChooser.showOpenDialog(null);
@@ -230,20 +239,26 @@ public class ActionHandler implements ActionListener, ListSelectionListener {
                     Path linePath = Paths.get(line.getAbsolutePath());
                     List<String>listLines=Files.readAllLines(linePath);
                     for (String listLine : listLines) {
-                        String [] lineSplit = listLine.split(",");
-                        int num=Integer.parseInt(lineSplit[0]);
-                        String product = lineSplit[1];
-                        int price = Integer.parseInt(lineSplit[2]);
-                        int count=Integer.parseInt(lineSplit[3]);
-                        InvoiceHeader Inv = null;
-                        for(InvoiceHeader invoice :inv){
-                            if(invoice.getNum()==num){
-                                Inv =invoice;
-                                break;
+                        try {
+                            String[] lineSplit = listLine.split(",");
+                            int num = Integer.parseInt(lineSplit[0]);
+                            String product = lineSplit[1];
+                            int price = Integer.parseInt(lineSplit[2]);
+                            int count = Integer.parseInt(lineSplit[3]);
+                            InvoiceHeader Inv = null;
+                            for (InvoiceHeader invoice : inv) {
+                                if (invoice.getNum() == num) {
+                                    Inv = invoice;
+                                    break;
+                                }
                             }
+                            InvoiceLine linesss = new InvoiceLine(num, product, price, count, Inv);
+                            Inv.getLines().add(linesss);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(frame,"please load correct file format","Error",JOptionPane.ERROR_MESSAGE);
+
                         }
-                        InvoiceLine linesss = new InvoiceLine(num, product, price, count, Inv);
-                        Inv.getLines().add(linesss);
                     }
 
                 }
@@ -257,20 +272,27 @@ public class ActionHandler implements ActionListener, ListSelectionListener {
 
         }catch (IOException ex){
             ex.printStackTrace();
+            JOptionPane.showMessageDialog(frame,"please load correct file format","Error",JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void InvoiceCreated() {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
         String date = invDialog.getDateField().getText();
         String name = invDialog.getCustomerField().getText();
         int invNumber = frame.getMaxNumber();
+try {
+    dateFormat.parse(date);
+    InvoiceHeader invoiceHeader = new InvoiceHeader(invNumber, name, date);
+    frame.getInvoicess().add(invoiceHeader);
+    frame.getTableView().fireTableDataChanged();
+    invDialog.setVisible(false);
+    invDialog.dispose();
+    invDialog = null;
+}catch (ParseException ex){
+    JOptionPane.showMessageDialog(frame,"please enter correct date format","Error", JOptionPane.ERROR_MESSAGE);
+}
 
-        InvoiceHeader invoiceHeader = new InvoiceHeader(invNumber, name, date);
-        frame.getInvoicess().add(invoiceHeader);
-        frame.getTableView().fireTableDataChanged();
-        invDialog.setVisible(false);
-        invDialog.dispose();
-        invDialog = null;
     }
 
     private void NoInvoiceCreated() {
