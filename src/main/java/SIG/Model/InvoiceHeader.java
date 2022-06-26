@@ -9,7 +9,7 @@ public class InvoiceHeader {
     private int num;
     private String customer;
     private String date;
-    private int total_price;
+    private double total_price;
     private ArrayList<InvoiceLine>lines;
 
     public InvoiceHeader(int num, String customer, String date) {
@@ -44,8 +44,8 @@ public class InvoiceHeader {
 
     public ArrayList<InvoiceLine> getLines() {
         if(lines==null){
-        lines=new ArrayList<>(); }
-        
+            lines=new ArrayList<>(); }
+
         return lines;
     }
 
@@ -53,27 +53,27 @@ public class InvoiceHeader {
         this.lines = lines;
     }
 
-    public int getTotal_price() {
-       int total=0;
-       if(this.lines != null){
-        for (InvoiceLine line : lines) {
-         total=total+ line.getTotal_line();
+    public double getTotal_price() {
+        double total=0;
+        if(this.lines != null){
+            for (InvoiceLine line : lines) {
+                total=total+ line.getTotal_line();
+            }
         }
-       }
         return total;
     }
-    
-   
-    public void setTotal_price(int total_price) {
+
+
+    public void setTotal_price(double total_price) {
         this.total_price = total_price;
     }
-    
+
     public String saveCsv() {
-    	return num +","+ date+","+customer ;
+        return num +","+ date+","+customer ;
     }
 
-    
-    
-    
-    
+
+
+
+
 }

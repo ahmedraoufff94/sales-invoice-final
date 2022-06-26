@@ -3,21 +3,21 @@ package SIG.Model;
 
 
 public class InvoiceLine {
-private int num;   
-private String item;
-private int price;
-private int count;
-private InvoiceHeader invoice;
+    private int num;
+    private String item;
+    private double price;
+    private int count;
+    private InvoiceHeader invoice;
 
-    public InvoiceLine(int num, String item, int price, int count, InvoiceHeader invoice) {
+    public InvoiceLine(int num, String item, double price, int count, InvoiceHeader invoice) {
         this.num = num;
         this.item = item;
         this.price = price;
         this.count = count;
         this.invoice = invoice;
     }
-    
-    public InvoiceLine(String item, int price, int count, InvoiceHeader invoice) {
+
+    public InvoiceLine(String item, double price, int count, InvoiceHeader invoice) {
         this.item = item;
         this.price = price;
         this.count = count;
@@ -32,7 +32,7 @@ private InvoiceHeader invoice;
         this.num = num;
     }
 
-    
+
 
     public int getCount() {
         return count;
@@ -58,21 +58,21 @@ private InvoiceHeader invoice;
         this.item = item;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
-    
-    public int getTotal_line(){
-    return price*count;
-    }
- 
-    public String saveCsv() {
-    	return num +","+ item+","+price+","+count ;
+
+    public double getTotal_line(){
+        return price*count;
     }
 
-    
+    public String saveCsv() {
+        return num +","+ item+","+price+","+count ;
+    }
+
+
 }
